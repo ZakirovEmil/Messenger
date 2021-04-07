@@ -12,6 +12,7 @@ public class ClientHandler extends Thread {
         this.clientSocket = socket;
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
+        start();
     }
 
     @Override
@@ -26,9 +27,10 @@ public class ClientHandler extends Thread {
                 try {
                     while (true){
                         text = in.readLine();
-                        if (text.equals("@stop"))
+                        if (text.equals("@stop")) {
                             this.downService();
-                        break;
+                            break;
+                        }
                     }
                 } catch (IOException ioException) { }
         } catch (IOException e) { }
