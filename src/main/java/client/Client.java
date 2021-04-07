@@ -30,7 +30,6 @@ public class Client {
             new WriteMsg().start();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
             downService();
         }
     }
@@ -49,6 +48,7 @@ public class Client {
     private class ReadMsg extends Thread {
         @Override
         public void run() {
+
             String str;
             try {
                 while (true) {
@@ -60,35 +60,33 @@ public class Client {
                     System.out.println(str);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
                 downService();
             }
         }
     }
 
-    private class WriteMsg extends Thread {
+    public class WriteMsg extends Thread {
+
         @Override
         public void run() {
             while (true) {
-                String userWord;
+                String text;
                 try {
-                    userWord = inputConsole.readLine(); // сообщения с консоли
-                    if (userWord.equals("stop")) {
+                    text = inputConsole.readLine();
+                    if (text.equals("stop")) {
                         out.write("stop" + "\n");
-                        Client.this.downService(); // харакири
-                        break; // выходим из цикла если пришло "stop"
+                        downService();
+                        break;
                     } else {
-                        out.write(userWord); // отправляем на сервер
+                        out.write(nickname + ": " + text + "\n");
                     }
-                    out.flush(); // чистим
+                    out.flush();
                 } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
                     downService();
                 }
             }
         }
+
     }
 
     private void downService() {
