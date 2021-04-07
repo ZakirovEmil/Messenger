@@ -31,9 +31,19 @@ public class ClientHandler extends Thread {
                             this.downService();
                             break;
                         }
+                        for (ClientHandler vr : Server.serverList) {
+                            vr.send(text); // отослать принятое сообщение с привязанного клиента всем остальным влючая его
+                        }
                     }
                 } catch (IOException ioException) { }
         } catch (IOException e) { }
+    }
+
+    private void send(String msg) {
+        try {
+            out.write(msg + "\n");
+            out.flush();
+        } catch (IOException ignored) {}
     }
 
     private void downService() throws IOException {
