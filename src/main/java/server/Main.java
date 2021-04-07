@@ -3,7 +3,7 @@ package server;
 import java.io.IOException;
 
 public class Main {
-    public static void main() throws IOException {
-        var server = new Server();
+    public static void main(String[] args) throws IOException {
+        new Server();
     }
 }
