@@ -10,7 +10,7 @@ public class Server{
     public static final int PORT = 3333;
     public static LinkedList<ClientHandler> serverList = new LinkedList<>();
 
-    public static void main(String[] args) throws IOException {
+    public Server() throws IOException {
         Socket socket = null;
         ServerSocket serverSocket = null;
         try {
