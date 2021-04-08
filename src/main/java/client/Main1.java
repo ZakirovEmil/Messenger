@@ -1,6 +1,6 @@
 package client;
 
-public class Main {
+public class Main1 {
 
     public static String ip = "localhost";
     public static int port = 3333;
