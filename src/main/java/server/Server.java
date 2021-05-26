@@ -19,6 +19,7 @@ public class Server{
             while (true){
                 socket = serverSocket.accept();
                 try {
+                    System.out.println("New client");
                     serverList.add(new ClientHandler(socket));
                 } catch (IOException e) {
                     socket.close();

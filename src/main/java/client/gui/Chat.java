@@ -3,7 +3,6 @@ package client.gui;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 public class Chat {
     private ChatPanel chatPanel;
@@ -11,7 +10,7 @@ public class Chat {
     private ReadMsg readMsg;
 
     public Chat() {
-        chatPanel = new ChatPanel(new SendButtonAction());
+        chatPanel = new ChatPanel(new SendMsgBtnAction());
         connection = new ChatConnection("localhost", 3333);
         readMsg = new ReadMsg();
     }
@@ -20,12 +19,11 @@ public class Chat {
         return chatPanel.getChat();
     }
 
-    private class SendButtonAction implements ActionListener {
+    private class SendMsgBtnAction extends Thread implements ActionListener {
 
-//        public SendButtonAction() {
-//            start();
-//        }
-
+        public SendMsgBtnAction() {
+            start();
+        }
 
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -44,26 +42,8 @@ public class Chat {
 
         @Override
         public void run() {
-//            while (true){
-////                if (connection.hasData()) {
-////                    chatPanel.addNewMessage(connection.getData());
-////                }
-//                var str = connection.getData();
-//                if (!str.isEmpty()){
-//                    chatPanel.addNewMessage(str);
-//                }
-//            }
-            while (true) {
-                String str = null;
-                try {
-                    str = connection.in.readLine();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-//                if (str.equals("stop")) {
-//                    break;
-//                }
-                System.out.println(str);
+            while (true){
+                chatPanel.addNewMessage(connection.getData());
             }
         }
     }

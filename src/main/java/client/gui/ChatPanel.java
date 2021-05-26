@@ -1,4 +1,5 @@
 package client.gui;
+
 import client.Client;
 import message.messages.TextMsg;
 
@@ -21,16 +22,11 @@ public class ChatPanel {
 
     public ChatPanel(ActionListener buttonListener) {
         chatPnl = new JPanel();
-//        chatPnl.setBackground(Color.GRAY);
         chatPnl.setLayout(new BoxLayout(chatPnl, BoxLayout.Y_AXIS));
 
         countMembersLabel = new JLabel("Count members:");
         countMembersLabel.setMinimumSize(new Dimension(Integer.MAX_VALUE, 25));
-//        countMembersLabel.setBackground(Color.RED);
-//        countMembersLabel.setHorizontalTextPosition(JLabel.LEFT);
         countMembersLabel.setHorizontalAlignment(SwingConstants.LEFT);
-//        countMembersLabel.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-//        countMembersLabel.setAlignmentY(JComponent.RIGHT_ALIGNMENT);
         chatPnl.add(countMembersLabel);
 
         historyChat = new JTextArea("sjgnbsjgnsgjsgjsngjkl");
@@ -45,7 +41,6 @@ public class ChatPanel {
 //        chatPnl.add(messagesPanel);
 
 
-
         JPanel controlPnl = new JPanel();
         sendBtn = new JButton("Send");
         sendBtn.addActionListener(buttonListener);
@@ -54,7 +49,6 @@ public class ChatPanel {
         msgField.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         nickField = new JTextField(10);
         nickField.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-//        nickField.setBackground(Color.GRAY);
         controlPnl.add(nickField);
         controlPnl.add(msgField);
         controlPnl.add(sendBtn);
@@ -64,19 +58,15 @@ public class ChatPanel {
 
     }
 
-    public String getMsg(){
+    public String getMsg() {
         return nickField.getText() + ":" + msgField.getText();
     }
 
-    public void addNewMessage(String str){
+    public void addNewMessage(String str) {
         historyChat.setText(historyChat.getText() + "\n" + str);
     }
 
-//    privat void ButtonAction() implements ActionListener {
-//
-//    }
-
-    public JPanel getChat(){
+    public JPanel getChat() {
         return chatPnl;
     }
 

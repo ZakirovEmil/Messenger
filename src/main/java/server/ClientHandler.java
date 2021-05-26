@@ -8,60 +8,52 @@ class ClientHandler extends Thread {
 
     private Socket clientSocket; // сокет, через который сервер общается с клиентом,
     private BufferedReader in; // поток чтения из сокета
-    private BufferedWriter out; // поток завписи в сокет
+    private PrintWriter out; // поток завписи в сокет
 
     public ClientHandler(Socket socket) throws IOException {
+        System.out.println("Client connected");
         this.clientSocket = socket;
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+        out = new PrintWriter(socket.getOutputStream());
         start();
     }
 
     @Override
     public void run() {
-        String word;
         try {
-            word = in.readLine();
-            try {
-                out.write(word + "\n");
-                out.flush();
-            } catch (IOException ignored) {
-            }
-            try {
-                while (true) {
-                    word = in.readLine();
-                    if (word.equals("stop")) {
-                        this.downService();
-                        break;
-                    }
-                    System.out.println("Echoing: " + word);
-                    for (ClientHandler vr : Server.serverList) {
-                        vr.send(word);
+            String word;
+            while (true) {
+                word = in.readLine();
+                if (word.equals("stop")) {
+                    this.downService();
+                    break;
+                }
+                System.out.println("Echoing: " + word);
+                for (ClientHandler client : Server.serverList) {
+                    if (client != this){
+                        client.send(word);
                     }
                 }
-            } catch (NullPointerException ignored) {
             }
         } catch (IOException e) {
-            try {
-                this.downService();
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
+            e.printStackTrace();
         }
     }
 
     private void send(String msg) {
-        try {
-            out.write(msg + "\n");
-            out.flush();
-        } catch (IOException ignored) {
-        }
-
+        out.println(msg);
+        out.flush();
     }
 
     private void downService() throws IOException {
-        clientSocket.close();
-        in.close();
-        out.close();
+        try {
+            if (!clientSocket.isClosed()) {
+                clientSocket.close();
+                in.close();
+                out.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

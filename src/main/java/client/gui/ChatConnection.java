@@ -8,7 +8,7 @@ import java.net.Socket;
 public class ChatConnection {
     public Socket clientSocket;
     public BufferedReader in; // поток чтения из сокета
-    public BufferedWriter out; // поток чтения в сокет
+    public PrintWriter out; // поток чтения в сокет
     public String ip; // ip адрес клиента
     public int port; // порт соединения
 
@@ -23,9 +23,8 @@ public class ChatConnection {
         }
         try {
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-//            new Client1.ReadMsg().start();
-//            new Client1.WriteMsg().start();
+            out = new PrintWriter((clientSocket.getOutputStream()));
+
         } catch (IOException e) {
             e.printStackTrace();
             downService();
@@ -33,13 +32,12 @@ public class ChatConnection {
     }
 
     public void sendData(String str){
-        try {
+        if (clientSocket.isConnected()) {
             System.out.println("Send:" + str);
-            out.write(str);
+            out.println(str);
             out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+        else {System.out.println("Close");}
     }
 
     public boolean hasData(){
@@ -58,8 +56,9 @@ public class ChatConnection {
             return str;
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Error");
         }
-        return "Error";
+        return null;
     }
 
     public void downService() {
