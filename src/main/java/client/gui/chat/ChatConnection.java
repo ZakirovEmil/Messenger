@@ -1,14 +1,12 @@
-package client.gui;
+package client.gui.chat;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.Socket;
 
 public class ChatConnection {
     public Socket clientSocket;
-    public BufferedReader in; // поток чтения из сокета
-    public PrintWriter out; // поток чтения в сокет
+    public ObjectInputStream in; // поток чтения из сокета
+    public ObjectOutputStream out; // поток чтения в сокет
     public String ip; // ip адрес клиента
     public int port; // порт соединения
 
@@ -22,41 +20,48 @@ public class ChatConnection {
             System.err.println("Socket failed");
         }
         try {
-            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            out = new PrintWriter((clientSocket.getOutputStream()));
-
+            OutputStream outputStream = clientSocket.getOutputStream();
+            out = new ObjectOutputStream(outputStream);
+            InputStream inputStream = clientSocket.getInputStream();
+            in = new ObjectInputStream(inputStream);
         } catch (IOException e) {
+            System.out.println("ss");
+
             e.printStackTrace();
             downService();
         }
+        System.out.println("ss");
+
     }
 
-    public void sendData(String str){
+    public void sendData(String str) throws IOException {
         if (clientSocket.isConnected()) {
             System.out.println("Send:" + str);
-            out.println(str);
+            out.writeObject(str);
             out.flush();
         }
         else {System.out.println("Close");}
     }
 
-    public boolean hasData(){
-        try {
-            return in.ready();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    public boolean hasData(){
+//        try {
+//            return in.ready();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     public String getData() {
         try {
-            String str = in.readLine();
+            String str = (String) in.readObject();
             System.out.println("Get:" + str);
             return str;
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Error");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return null;
     }

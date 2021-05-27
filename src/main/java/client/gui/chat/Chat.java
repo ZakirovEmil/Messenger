@@ -1,8 +1,9 @@
-package client.gui;
+package client.gui.chat;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Chat {
     private ChatPanel chatPanel;
@@ -19,6 +20,10 @@ public class Chat {
         return chatPanel.getChat();
     }
 
+    public void setName(String name){
+        chatPanel.setNickField(name);
+    }
+
     private class SendMsgBtnAction extends Thread implements ActionListener {
 
         public SendMsgBtnAction() {
@@ -30,7 +35,11 @@ public class Chat {
             System.out.println(chatPanel.getMsg());
             String str = chatPanel.getMsg();
             chatPanel.addNewMessage(str);
-            connection.sendData(str);
+            try {
+                connection.sendData(str);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
     }
 
