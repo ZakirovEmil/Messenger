@@ -7,14 +7,16 @@ import java.net.*;
 class ClientHandler extends Thread {
 
     private Socket clientSocket; // сокет, через который сервер общается с клиентом,
-    private BufferedReader in; // поток чтения из сокета
-    private PrintWriter out; // поток завписи в сокет
+    private ObjectInputStream in; // поток чтения из сокета
+    private ObjectOutputStream out; // поток завписи в сокет
+    private MessageHandler msgHandler;
 
     public ClientHandler(Socket socket) throws IOException {
         System.out.println("Client connected");
-        this.clientSocket = socket;
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream());
+        clientSocket = socket;
+        msgHandler = new MessageHandler();
+        in = new ObjectInputStream(socket.getInputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
         start();
     }
 
@@ -23,26 +25,29 @@ class ClientHandler extends Thread {
         try {
             String word;
             while (true) {
-                word = in.readLine();
-                if (word.equals("stop")) {
-                    this.downService();
-                    break;
-                }
-                System.out.println("Echoing: " + word);
-                for (ClientHandler client : Server.serverList) {
-                    if (client != this){
-                        client.send(word);
-                    }
-                }
+                word = (String) in.readObject();
+                sendMsgAll(word);
             }
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
 
+    private void sendMsgAll(String msg){
+        for (ClientHandler client : Server.serverList) {
+            if (client != this){
+                client.send(msg);
+            }
+        }
+    }
+
     private void send(String msg) {
-        out.println(msg);
-        out.flush();
+        try {
+            out.writeObject(msg);
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void downService() throws IOException {
