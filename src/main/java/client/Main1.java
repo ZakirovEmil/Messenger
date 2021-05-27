@@ -6,6 +6,7 @@ public class Main1 {
     public static int port = 3333;
 
     public static void main(String[] args) {
-        new Client(ip, port);
+//        new Client1(ip, port);
+        new Client();
     }
 }
