@@ -8,10 +8,13 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class MessengerView extends JFrame implements ItemListener {
+public class MessengerView extends JFrame {
 
     private MessengerViewModel messengerViewModel;
+    private JPanel signView;
     private JPanel views;
+    private ChatView chatView;
+    private String state;
 
 
     public MessengerView() {
@@ -26,37 +29,44 @@ public class MessengerView extends JFrame implements ItemListener {
 
 
     private void initGUI() {
-        setTitle("Messenger");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        views = new JPanel(new CardLayout());
+        initFrame();
 
-        initEnter();
+        views = new JPanel(new CardLayout());
+        add(views);
+
         addingViews();
 
-
         pack();
-
         setVisible(true);
+
+        bind();
+    }
+
+    private void initFrame() {
+        setTitle("Messenger");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
     }
 
     private void addingViews() {
-        views.add(new SignView(this, "Messenger", true), "Sign");
-        views.add(new ChatView(), "Chats");
+        signView = new SignView(this);
+//        chatView = new ChatView(this);
+        views.add(new SignView(this), "Sign");
+        views.add(new ChatView(this), "Chat");
     }
 
-    private void initEnter() {
-        new SignView(this, "Messenger", true);
+    public void changeState(String state) {
+        this.state = state;
+        backBind();
+        bind();
     }
 
     private void bind() {
-
+        CardLayout cl = (CardLayout)(views.getLayout());
+        cl.show(views, messengerViewModel.getState());
     }
 
     private void backBind() {
-    }
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-
+        messengerViewModel.setState(state);
     }
 }

@@ -11,8 +11,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
-public class SignView extends JDialog implements View {
+public class SignView extends JPanel implements View {
 
     private JLabel loginLabel;
     private JLabel passwordLabel;
@@ -24,31 +25,41 @@ public class SignView extends JDialog implements View {
     private MessengerView root;
     private boolean successful;
 
-    public SignView(MessengerView root, String title, boolean modal) {
-        super(root, title, modal);
-
+    public SignView(MessengerView root) {
         this.root = root;
         signViewModel = new SignViewModel();
         initGUI();
         bind();
-
-//        this.addWindowListener(new WindowAdapter(){
-//            public void windowClosed(WindowEvent e)
-//            {
-//                if (e.getNewState() == getDefaultCloseOperation())
-//                    root.dispose();
-//            }
-//        });
     }
 
 
     private void initGUI() {
-//        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         loginLabel = new JLabel("Login:");
         loginLabel.setSize(new Dimension(30, 10));
         loginField = new JTextField(20);
         loginField.setPreferredSize(new Dimension(5, 25));
+        addListener(loginField);
+
+        passwordLabel = new JLabel("Password:");
+        passwordLabel.setSize(new Dimension(30, 10));
+        passwordField = new JPasswordField(20);
+        passwordField.setPreferredSize(new Dimension(5, 25));
+        addListener(passwordField);
+
+        okButton = new JButton("OK");
+        okButton.addActionListener(new okButtonAction());
+//        setMinimumSize(new Dimension(300, 200));
+
+        add(loginLabel);
+        add(loginField);
+        add(passwordLabel);
+        add(passwordField);
+        add(okButton);
+//        setVisible(true);
+    }
+
+    private void addListener(JTextField loginField) {
         loginField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -68,60 +79,23 @@ public class SignView extends JDialog implements View {
                 bind();
             }
         });
-
-        passwordLabel = new JLabel("Password:");
-        passwordLabel.setSize(new Dimension(30, 10));
-        passwordField = new JPasswordField(20);
-        passwordField.setPreferredSize(new Dimension(5, 25));
-        passwordField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                backBind();
-                bind();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                backBind();
-                bind();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                backBind();
-                bind();
-            }
-        });
-        okButton = new JButton("OK");
-        okButton.addActionListener(new okButtonAction());
-//        setMinimumSize(new Dimension(300, 200));
-        add(loginLabel);
-        add(loginField);
-        add(passwordLabel);
-        add(passwordField);
-        add(okButton);
-
-        pack();
-        setVisible(true);
-    }
-
-    private void closeWin() {
-        dispose();
     }
 
     private class okButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            backBind();
-            if (signViewModel.isEnabledIn()) {
-                closeWin();
-            }
-            bind();
+//            backBind();
+//            bind();
+            root.changeState("Chat");
+
         }
     }
 
     private void bind() {
         okButton.setEnabled(signViewModel.isEnabledIn());
+//        loginField.setText(signViewModel.getLogin());
+//        passwordField.setText(Arrays.toString(signViewModel.getPassword()));
+//        root.changeState("Sign");
     }
 
     private void backBind() {
